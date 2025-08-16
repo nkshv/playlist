@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Gere uma Playlist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Crie uma nova Playlist</h1>
+        <p><a href="{{ url_for('show_playlists') }}">Minhas Playlists</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('create_playlist_route') }}">
+            <label for="playlist_id">Source Playlist ID or URL:</label><br>
+            <input type="text" id="playlist_id" name="playlist_id" required><br><br>
+
+            <label for="playlist_name">New Playlist Name:</label><br>
+            <input type="text" id="playlist_name" name="playlist_name" required><br><br>
+            <button type="submit">Create Playlist</button>
+        </form>
+    </div>
+</body>
+</html>

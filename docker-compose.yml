@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Serviço do Banco de Dados (MariaDB)
+  db:
+    image: mariadb:10.5
+    container_name: playlist_db_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+    # --- PARTE CRÍTICA DA SOLUÇÃO 1 ---
+    # Esta seção verifica repetidamente se o banco de dados está pronto.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Serviço da Aplicação (Flask)
+  app:
+    build: .
+    container_name: playlist_app_container
+    restart: always
+    ports:
+      - "8888:8888"
+    # --- PARTE CRÍTICA DA SOLUÇÃO 2 ---
+    # 'depends_on' agora espera a condição 'service_healthy' passar,
+    # o que significa que o healthcheck do 'db' foi bem-sucedido.
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      REDIRECT_URI: ${REDIRECT_URI}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

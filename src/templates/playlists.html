@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Saved Playlists</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('home') }}" class="nav-link">← Back to Home</a>
+        <h1>Minhas Playlists</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% if playlists %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data</th>
+                        <th>Link</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for playlist in playlists %}
+                    <tr>
+                        <td>{{ playlist.name }}</td>
+                        <td>{{ playlist.date }}</td>
+                        <td><a href="{{ playlist.link }}" target="_blank">Abrir no Spotify</a></td>
+                        <td>
+                            <form action="{{ url_for('delete_playlist', playlist_id=playlist.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Crie uma Playlist!</p>
+        {% endif %}
+    </div>
+</body>
+</html>

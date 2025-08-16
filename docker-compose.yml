@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Serviço do Banco de Dados (MariaDB)
+  # Mariadb
   db:
     image: mariadb:10.5
     container_name: playlist_db_container
@@ -15,23 +15,19 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - app-network
-    # --- PARTE CRÍTICA DA SOLUÇÃO 1 ---
-    # Esta seção verifica repetidamente se o banco de dados está pronto.
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
 
-  # Serviço da Aplicação (Flask)
+  # Flask
   app:
     build: .
     container_name: playlist_app_container
     restart: always
     ports:
       - "8888:8888"
-    # --- PARTE CRÍTICA DA SOLUÇÃO 2 ---
-    # 'depends_on' agora espera a condição 'service_healthy' passar,
-    # o que significa que o healthcheck do 'db' foi bem-sucedido.
+
     depends_on:
       db:
         condition: service_healthy

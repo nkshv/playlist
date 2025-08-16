@@ -2,12 +2,12 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>My Saved Playlists</title>
+    <title>Minhas Playlists</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <a href="{{ url_for('home') }}" class="nav-link">← Back to Home</a>
+        <a href="{{ url_for('home') }}" class="nav-link">← Voltar à Home</a>
         <h1>Minhas Playlists</h1>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -36,7 +36,7 @@
                         <td><a href="{{ playlist.link }}" target="_blank">Abrir no Spotify</a></td>
                         <td>
                             <form action="{{ url_for('delete_playlist', playlist_id=playlist.id) }}" method="post" style="display:inline;">
-                                <button type="submit" class="delete-btn">Delete</button>
+                                <button type="submit" class="delete-btn">Deletar</button>
                             </form>
                         </td>
                     </tr>
